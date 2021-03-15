@@ -13,16 +13,13 @@ import { Link } from 'react-router-dom';
 import Loading from '../shared/Loading';
 import swal from 'sweetalert';
 
+import { connect } from 'react-redux';
+
 
 function TodoForm(props) {
     // params 
     const {name, id} = useParams()
 
-    const [loading, setLoading] = useState(false)
-    const [data, setData] = useState({})
-
-
-    // const ref = firebase.firestore().collection('todos')
     
 
     //FUNCT ADD
@@ -31,7 +28,7 @@ function TodoForm(props) {
         ref.doc(data.id)
         .set(data)
         .catch(err=> console.log(err))
-        setLoading(false)
+        props.isLoading(false)
         swal({
             title: "Saved",
             icon: "success",
@@ -46,7 +43,7 @@ function TodoForm(props) {
         ref.doc(data.id)
         .update(data)
         .catch(err=> console.log(err))
-        setLoading(false)
+        props.isLoading(false)
         props.history.push(`/list/${name}`)
         swal({
             title: "Edited",
@@ -60,14 +57,13 @@ function TodoForm(props) {
         let isEdit = id !== undefined
         if (isEdit) {
             const getDataEdit =()=>{
-                setLoading(true)
+                props.isLoading(true)
                 const ref = firebase.firestore().collection('todos')
                 ref.where("id", "==", id).onSnapshot((querySnapshot)=>{
                     querySnapshot.forEach((doc)=>{
-                        // items.push(doc.data())
-                        setData(doc.data())
+                        props.setDetailTodo(doc.data())
                     })
-                    setLoading(false)
+                    props.isLoading(false)
                 })
             }
             getDataEdit()
@@ -88,25 +84,23 @@ function TodoForm(props) {
 
 
     let initialValues={
-        "id" : data.id || uuidv4(),
-        "createdAt" : data.createdAt || new Date(),
+        "id" : props.detailTodo.id || uuidv4(),
+        "createdAt" : props.detailTodo.createdAt || new Date(),
         "name" : name,
-        "title" : data.title || "",
-        "desc" :  data.desc || "",
-        "isDone" : data.isDone || false,
-        "img" : data.img || "",
-        "fileName" : data.fileName || "",
-        "time" : data.time || `${moment(new Date()).format('DD MMMM')} ${moment(new Date()).format('hh:mm A')}`
+        "title" : props.detailTodo.title || "",
+        "desc" :  props.detailTodo.desc || "",
+        "isDone" : props.detailTodo.isDone || false,
+        "img" : props.detailTodo.img || "",
+        "fileName" : props.detailTodo.fileName || "",
+        "time" : props.detailTodo.time || `${moment(new Date()).format('DD MMMM')} ${moment(new Date()).format('hh:mm A')}`
     }
 
 
 
     const handleImageUpload = (e, setFieldValue)=>{
-        // setLoading(true)
         const file = e.target.files[0]
         const storageRef = firebase.storage()
         const fileRef = storageRef.ref(file.name)
-        // .child(file.name)
         fileRef.put(file).then(()=> {
             console.log('uploaded file')
             fileRef.getDownloadURL().then(res=>{
@@ -115,12 +109,11 @@ function TodoForm(props) {
                 setFieldValue('fileName', e.target.files[0].name) //call hook and upload
             })
         })
-        // setLoading(false)
         // console.log(e.target.files[0].name)
     }
     return (
         <div className='todo-form'>
-            {loading ? <Loading /> : null}
+            {props.loading ? <Loading /> : null}
             <header>
                 <h1>Hello : {name}</h1>
                 <div className="act-button">
@@ -136,11 +129,13 @@ function TodoForm(props) {
                 onSubmit={(val, {resetForm})=> {
                     if (id === undefined) {
                         // console.log(data)
-                        setLoading(true)
+                        // setLoading(true)
+                        props.isLoading(true)
                         addTodos(val)
                         resetForm({values : ''})
                     } else {
-                        setLoading(true)
+                        // setLoading(true)
+                        props.isLoading(true)
                         editTodos(val)
                         // console.log(body)
                         resetForm({values : ''})
@@ -205,4 +200,19 @@ function TodoForm(props) {
     );
 }
 
-export default TodoForm;
+
+const mapStateToProps = (state)=>{
+    return{
+        loading : state.loading,
+        detailTodo : state.detailTodo
+    }
+}
+
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        isLoading : (data) => { dispatch({type:'LOADING' , data: data})},
+        setDetailTodo : (data) => { dispatch({type:'DETAIL_TODO' , data: data})}
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TodoForm);

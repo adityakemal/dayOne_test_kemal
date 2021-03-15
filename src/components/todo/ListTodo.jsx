@@ -3,6 +3,7 @@ import { Button, Col, Row, Select } from 'antd';
 import { Edit2, Trash2 } from 'react-feather';
 import firebase from "../../firebase";
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { useParams } from "react-router-dom";
 import Loading from '../shared/Loading';
@@ -13,9 +14,7 @@ const { Option } = Select;
 
 
 function ListTodo(props) {
-    
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
+    // console.log(props)
     const [filter, setFilter] = useState('title')
     
     const {name} = useParams()
@@ -24,15 +23,16 @@ function ListTodo(props) {
     useEffect(()=>{
         const getTodos = ()=> {
             //GET FUNC
-            setLoading(true)
+            props.isLoading(true)
             const ref = firebase.firestore().collection('todos')
             ref.orderBy(filter).onSnapshot((querySnapshot)=>{
                 const items = []
                 querySnapshot.forEach((doc)=>{
                     items.push(doc.data())
                 })
-                setData(items.filter(res=> res.name === name))
-                setLoading(false)
+                props.setListTodo(items.filter(res=> res.name === name))
+                props.isLoading(false)
+
             })
         }
         getTodos()
@@ -49,11 +49,12 @@ function ListTodo(props) {
             dangerMode: true,
           }).then((willDelete) => {
             if (willDelete) {
-                setLoading(true)
+                props.isLoading(true)
+
                 const ref = firebase.firestore().collection('todos')
                 ref.doc(id).delete()
                 .catch(err=> console.log(err))
-                setLoading(false)
+                props.isLoading(false)
                 swal("Poof! Your todo list has been deleted!", {
                     icon: "success",
                     timer : 1500,
@@ -66,6 +67,7 @@ function ListTodo(props) {
 
     // DONE FUNC 
     const doneTodos = (data) => {
+        props.isLoading(true)
         const ref = firebase.firestore().collection('todos')
         ref.doc(data.id)
         .update({
@@ -73,7 +75,7 @@ function ListTodo(props) {
             isDone : true
         })
         .catch(err=> console.log(err))
-        setLoading(false)
+        props.isLoading(false)
     }
 
     // with get func firebase
@@ -89,7 +91,7 @@ function ListTodo(props) {
     }
     return (
         <div className='card-list'>
-            {loading ? <Loading /> : null}
+            {props.loading ? <Loading /> : null}
            
             <header>
                 <h1>Hello : {name}</h1>
@@ -101,7 +103,7 @@ function ListTodo(props) {
                             <Option value="createdAt">CreatedBy Time</Option>
                         </Select>
                     </div>
-                    <Link to={`/form/${name}`}>
+                    <Link to={`/form/${name}`} onClick={()=>props.setDetailTodo({})}>
                         <Button size='large' >Create a ToDo</Button>
                     </Link>
                 </div>
@@ -109,7 +111,7 @@ function ListTodo(props) {
             <div className="list">
                 <Row gutter={[16, 16]}>
                     {
-                        data.map((res,i)=>(
+                        props.listTodo.map((res,i)=>(
                             <Col xs={24} sm={12} md={8} lg={8} xl={6} key={i}>
                                 <div className="card">
                                     <div className="chead">
@@ -149,4 +151,20 @@ function ListTodo(props) {
     );
 }
 
-export default ListTodo;
+const mapStateToProps = (state)=>{
+    return{
+        loading : state.loading,
+        listTodo : state.listTodo
+    }
+}
+
+
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        isLoading : (data) => { dispatch({type:'LOADING' , data: data})},
+        setListTodo : (data) => { dispatch({type:'LIST_TODO' , data: data})},
+        setDetailTodo : (data) => { dispatch({type:'DETAIL_TODO' , data: {}})}
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListTodo);

@@ -2,8 +2,8 @@ import React from 'react';
 import { Button, Input, Form } from 'antd';
 import {Formik, Field} from 'formik'
 import * as Yup from 'yup'
-// import { Link } from 'react-router-dom';
-// import { withRouter } from 'react-router-dom';
+
+import { connect } from 'react-redux';
 
 function Todo(props) {
     const formSchema = Yup.object({
@@ -50,5 +50,7 @@ function Todo(props) {
         </div>
     );
 }
+
+
 
 export default Todo;
