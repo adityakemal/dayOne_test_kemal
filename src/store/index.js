@@ -3,7 +3,8 @@ import {createStore} from 'redux'
 const initialState = {
     loading : false,
     detailTodo : {},
-    listTodo : []
+    listTodo : [],
+    filter : 'title'
 }
 
 
@@ -26,6 +27,11 @@ const reducer = (state = initialState , action) => {
     if (action.type === 'LIST_TODO') {
         // console.log(state);
        return {...state, listTodo : action.data}
+    }
+
+    if (action.type === 'FILTER') {
+        // console.log(state);
+       return {...state, filter : action.data}
     }
     
 

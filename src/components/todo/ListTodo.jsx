@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect} from 'react';
 import { Button, Col, Row, Select } from 'antd';
 import { Edit2, Trash2 } from 'react-feather';
 import firebase from "../../firebase";
@@ -15,7 +15,6 @@ const { Option } = Select;
 
 function ListTodo(props) {
     // console.log(props)
-    const [filter, setFilter] = useState('title')
     
     const {name} = useParams()
     
@@ -25,7 +24,7 @@ function ListTodo(props) {
             //GET FUNC
             props.isLoading(true)
             const ref = firebase.firestore().collection('todos')
-            ref.orderBy(filter).onSnapshot((querySnapshot)=>{
+            ref.orderBy(props.filter).onSnapshot((querySnapshot)=>{
                 const items = []
                 querySnapshot.forEach((doc)=>{
                     items.push(doc.data())
@@ -36,7 +35,7 @@ function ListTodo(props) {
             })
         }
         getTodos()
-    },[filter, name]) 
+    },[props.filter, name]) 
 
 
     // DELETE FUNC 
@@ -86,9 +85,7 @@ function ListTodo(props) {
     //     })
     // }
     
-    const handleChangeFilter = (value)=>{
-        setFilter(value)
-    }
+    const handleChangeFilter = (value)=> props.setFilter(value)
     return (
         <div className='card-list'>
             {props.loading ? <Loading /> : null}
@@ -154,7 +151,8 @@ function ListTodo(props) {
 const mapStateToProps = (state)=>{
     return{
         loading : state.loading,
-        listTodo : state.listTodo
+        listTodo : state.listTodo,
+        filter : state.filter
     }
 }
 
@@ -163,7 +161,8 @@ const mapDispatchToProps = (dispatch) =>{
     return {
         isLoading : (data) => { dispatch({type:'LOADING' , data: data})},
         setListTodo : (data) => { dispatch({type:'LIST_TODO' , data: data})},
-        setDetailTodo : (data) => { dispatch({type:'DETAIL_TODO' , data: {}})}
+        setDetailTodo : (data) => { dispatch({type:'DETAIL_TODO' , data: {}})},
+        setFilter : (data) => { dispatch({type:'FILTER' , data: data})}
     }
 }
 
