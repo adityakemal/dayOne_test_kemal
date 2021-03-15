@@ -1,0 +1,31 @@
+//antd design css import
+@import '~antd/dist/antd.css';
+
+.fof{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  h2{
+    margin: 0;
+    font-weight: 300;
+  }
+}
+
+.loading{
+  background-color: rgba(0, 0, 0, 0.795);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+//import all scss files
+@import './styles/todo.scss';
+@import './styles/todo-form.scss';
+@import './styles/card-list.scss';

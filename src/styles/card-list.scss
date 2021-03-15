@@ -1,0 +1,117 @@
+.card-list{
+    min-height: 100vh;
+    background-color: #E5E5E5;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // flex-direction: column;
+    padding: 60px;
+    header{
+        width: 100%;
+        margin-bottom: 80px;
+        top: 0;
+        h1{
+            margin-bottom: 20px !important;
+        }
+        .act-button{
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: center;
+            button{
+                font-weight: 700;
+                font-size: 14px;
+                background-color: #333333;
+                color: white;
+                border-radius: 6px;
+            }
+        }
+    }
+    .card{
+        background-color: white;
+        padding: 10px;
+        border-radius: 4px;
+        position: relative;
+        .chead{
+            position: absolute;
+            // background-color: yellow;
+            right: 0;
+            margin-right: 10px;
+            svg{
+                width: 16px;
+                cursor: pointer;
+            }
+            .trash{
+                margin-left: 12px;
+                color: red;
+            }
+        }
+        .cbody{
+            display: flex;
+            // align-items: center;
+            justify-content: space-evenly;
+            margin-top: 10px;
+            img{
+                width: 48px;
+                height: 48px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+            .con{
+                width: 70%;
+                // background-color: yellow;
+                margin-bottom: 10px;
+                h3{
+                    margin-bottom: 4px;
+                }
+                .des{
+                    font-size: 12px;
+                }
+                button{
+                    width: 100%;
+                    background: #CCCCCC;
+                    font-weight: 500;
+                    color: #2D2F30;
+                    &:disabled{
+                        background-color: #F2F2F2;
+                        color: #BDBDBD;
+                    }
+                }
+            }
+        }
+        .cfoot{
+            font-size: 10px;
+            p{
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 990px) {
+    .card-list{
+        min-height: 100vh;
+        padding: 20px;
+        header{
+            width: 100%;
+            margin-bottom: 50px;
+            top: 0;
+            h1{
+                margin-bottom: 20px !important;
+            }
+            .act-button{
+                button{
+                    width: 100%;
+                    margin-top: 20px;
+                }
+            }
+        }
+        .list{
+            width: 100%;
+            .card{
+
+            }
+        }
+    }
+}
