@@ -102,7 +102,7 @@ function TodoForm(props) {
 
 
     const handleImageUpload = (e, setFieldValue)=>{
-        setLoading(true)
+        // setLoading(true)
         const file = e.target.files[0]
         const storageRef = firebase.storage()
         const fileRef = storageRef.ref(file.name)
@@ -112,11 +112,11 @@ function TodoForm(props) {
             fileRef.getDownloadURL().then(res=>{
                 // console.log(res)
                 setFieldValue('img', res) //call hook and upload
-                setLoading(false)
+                setFieldValue('fileName', e.target.files[0].name) //call hook and upload
             })
         })
+        // setLoading(false)
         // console.log(e.target.files[0].name)
-        setFieldValue('fileName', e.target.files[0].name) //call hook and upload
     }
     return (
         <div className='todo-form'>
